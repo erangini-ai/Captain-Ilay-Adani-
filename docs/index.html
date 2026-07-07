@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>סרן איליי עדני ז"ל — סרטון הזיכרון</title>
+<style>
+  @font-face {
+    font-family: 'David Libre Fallback';
+    src: local('David Libre'), local('Frank Ruhl Libre'), local('Times New Roman');
+  }
+  :root {
+    --bg: #0d0d14;
+    --surface-1: #14141f;
+    --surface-2: #1c1c2e;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --olive: #4a9b7f;
+    --red: #c9524c;
+    --text: #f0ede8;
+    --muted: #8a8496;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: 'Heebo', 'Arial Hebrew', 'Segoe UI', sans-serif;
+    overflow: hidden;
+    -webkit-user-select: none; user-select: none;
+  }
+  #stage {
+    position: relative; width: 100vw; height: 100vh; height: 100dvh;
+    background: #000;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.9s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+  .slide .frame {
+    position: absolute; inset: 0; overflow: hidden;
+  }
+  .slide img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    transform: scale(1);
+  }
+  .slide.active img.kenburns {
+    animation: kenburns 7.4s ease-out forwards;
+  }
+  @keyframes kenburns {
+    from { transform: scale(1.0); }
+    to   { transform: scale(1.09); }
+  }
+  .scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.05) 38%, rgba(0,0,0,0.35) 100%);
+  }
+  .caption {
+    position: absolute; right: 0; left: 0; bottom: 8%;
+    padding: 0 6% ;
+    text-align: center;
+  }
+  .caption .kicker {
+    color: var(--gold-light);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .caption .line {
+    font-family: 'David Libre', 'David Libre Fallback', serif;
+    font-size: clamp(18px, 4.6vw, 26px);
+    line-height: 1.5;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  }
+
+  /* Title & outro slides */
+  .title-slide, .outro-slide {
+    background: radial-gradient(ellipse at 50% 30%, #1c1c2e 0%, #0d0d14 70%);
+  }
+  .title-slide .frame, .outro-slide .frame {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; text-align: center; padding: 0 8%;
+  }
+  .title-slide img, .outro-slide img {
+    width: min(46vw, 220px); height: min(46vw, 220px);
+    object-fit: cover; border-radius: 50%;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 40px rgba(201,168,76,0.35);
+    margin-bottom: 28px;
+    position: static;
+    animation: none;
+  }
+  .name {
+    font-family: 'David Libre', 'David Libre Fallback', serif;
+    font-size: clamp(26px, 6vw, 40px);
+    color: var(--gold-light);
+    margin: 0 0 10px;
+  }
+  .rank {
+    font-size: clamp(14px, 3.4vw, 18px);
+    color: var(--muted);
+    margin: 0 0 18px;
+    letter-spacing: 0.02em;
+  }
+  .dates {
+    font-size: clamp(14px, 3.6vw, 18px);
+    color: var(--text);
+    letter-spacing: 0.08em;
+    border-top: 1px solid rgba(201,168,76,0.35);
+    border-bottom: 1px solid rgba(201,168,76,0.35);
+    padding: 10px 0;
+    margin-bottom: 22px;
+  }
+  .quote {
+    font-family: 'David Libre', 'David Libre Fallback', serif;
+    font-style: italic;
+    font-size: clamp(16px, 4.2vw, 22px);
+    color: var(--text);
+    max-width: 640px;
+    line-height: 1.6;
+  }
+  .blessing {
+    font-family: 'David Libre', 'David Libre Fallback', serif;
+    font-size: clamp(20px, 5vw, 30px);
+    color: var(--gold-light);
+    margin-top: 6px;
+  }
+  .unit-badge {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 6px 18px;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    color: var(--gold-light);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Progress bar */
+  #progress-wrap {
+    position: absolute; top: 0; right: 0; left: 0;
+    display: flex; gap: 5px;
+    padding: 14px 5% 0;
+    z-index: 20;
+  }
+  .pbar {
+    flex: 1; height: 3px; background: rgba(255,255,255,0.18);
+    border-radius: 2px; overflow: hidden;
+  }
+  .pbar > i {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  }
+  .pbar.done > i { width: 100% !important; transition: none; }
+  .pbar.current > i { transition: width linear; }
+
+  /* Controls */
+  #controls {
+    position: absolute; bottom: 0; right: 0; left: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 5% calc(16px + env(safe-area-inset-bottom));
+    z-index: 20;
+  }
+  #controls button {
+    background: rgba(20,20,31,0.7);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .hint {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* Start gate */
+  #gate {
+    position: absolute; inset: 0; z-index: 50;
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 10%;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  #gate .name { margin-bottom: 4px; }
+  #gate .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+  #startBtn {
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    color: #14141f;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Heebo', sans-serif;
+    box-shadow: 0 6px 24px rgba(201,168,76,0.3);
+  }
+  #gate .icon {
+    font-size: 34px;
+    margin-bottom: 18px;
+  }
+
+  #replay {
+    display: none;
+    margin-top: 26px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    padding: 10px 28px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-family: 'Heebo', sans-serif;
+  }
+  .outro-slide.active #replay { display: inline-block; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <div id="progress-wrap"></div>
+
+  <!-- 1: Title -->
+  <div class="slide title-slide" data-duration="6">
+    <div class="frame">
+      <img src="assets/img/01-title.jpg" alt="">
+      <p class="rank">מפקד צוות, מגלן</p>
+      <h1 class="name">סרן איליי עדני ז״ל</h1>
+      <p class="dates" dir="ltr">9.11.2001 &nbsp;–&nbsp; 7.10.2023</p>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="slide" data-duration="7">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/02-smile.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">מי שהיה</div>
+        <div class="line">תמיד מחייך, תמיד עם לב גדול</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="slide" data-duration="7">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/03-team.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">הצוות</div>
+        <div class="line">מנהיג שרץ קדימה, לא הצידה</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="slide" data-duration="6">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/04-kfaraza.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">7 באוקטובר 2023</div>
+        <div class="line">כפר עזה</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="slide" data-duration="7">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/05-house.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">מתוך עדות המשפחה</div>
+        <div class="line">"בשבילם אנחנו עושים את זה"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="slide" data-duration="6">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/06-flag.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">הנצחה</div>
+        <div class="line">אורך ימיך את חייך לזכר</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="slide" data-duration="7">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/07-parents-a.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">רמי ואורית עדני</div>
+        <div class="line">הוריו של סרן איליי עדני ז״ל</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="slide" data-duration="7">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/08-parents-b.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">תל מונד</div>
+        <div class="line">נושאים אותו איתם, כל יום</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="slide" data-duration="7">
+    <div class="frame">
+      <img class="kenburns" src="assets/img/09-team-memorial.jpg" alt="">
+      <div class="scrim"></div>
+      <div class="caption">
+        <div class="kicker">צוות עדני</div>
+        <div class="line">לזכר עמית גואטה, איליי עדני ועמיחי ונונו ז״ל</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10: Outro -->
+  <div class="slide outro-slide" data-duration="99999">
+    <div class="frame">
+      <p class="rank">מפקד צוות, מגלן &nbsp;·&nbsp; כפר עזה</p>
+      <h1 class="name">סרן איליי עדני ז״ל</h1>
+      <p class="blessing">יהי זכרו ברוך</p>
+      <span class="unit-badge">בהשקט ובבטחה תהיה גבורתכם</span>
+      <br>
+      <button id="replay" onclick="restart()">נגן שוב</button>
+    </div>
+  </div>
+
+  <div id="controls">
+    <button id="prevBtn" onclick="prev(); event.stopPropagation();">›</button>
+    <span class="hint">לחצו בכל מקום להמשך</span>
+    <button id="muteBtn" onclick="toggleMute(event)">🔊</button>
+  </div>
+
+  <div id="gate">
+    <div class="icon">🕯️</div>
+    <h1 class="name">סרן איליי עדני ז״ל</h1>
+    <p class="sub">סרטון הזיכרון</p>
+    <button id="startBtn" onclick="start(event)">הפעילו</button>
+  </div>
+
+  <audio id="bgm" src="assets/audio/alkolele.mp3" loop preload="auto"></audio>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const stage = document.getElementById('stage');
+  const progressWrap = document.getElementById('progress-wrap');
+  const bgm = document.getElementById('bgm');
+  let current = 0;
+  let timer = null;
+  let started = false;
+
+  slides.forEach(() => {
+    const bar = document.createElement('div');
+    bar.className = 'pbar';
+    const inner = document.createElement('i');
+    bar.appendChild(inner);
+    progressWrap.appendChild(bar);
+  });
+  const bars = Array.from(progressWrap.children);
+
+  function clearTimer() {
+    if (timer) { clearTimeout(timer); timer = null; }
+  }
+
+  function showSlide(i) {
+    clearTimer();
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    bars.forEach((b, idx) => {
+      b.classList.remove('done', 'current');
+      const inner = b.querySelector('i');
+      inner.style.transition = 'none';
+      inner.style.width = idx < i ? '100%' : '0%';
+      if (idx < i) b.classList.add('done');
+    });
+    current = i;
+    if (i >= slides.length - 1) return; // outro: no auto-advance
+
+    const dur = parseFloat(slides[i].dataset.duration) * 1000;
+    const bar = bars[i];
+    bar.classList.add('current');
+    const inner = bar.querySelector('i');
+    requestAnimationFrame(() => {
+      inner.style.transition = `width ${dur}ms linear`;
+      inner.style.width = '100%';
+    });
+    timer = setTimeout(() => next(), dur);
+  }
+
+  function next() {
+    if (current < slides.length - 1) showSlide(current + 1);
+  }
+  function prev() {
+    if (current > 0) showSlide(current - 1);
+  }
+  function restart() {
+    bgm.currentTime = 0;
+    bgm.play().catch(()=>{});
+    showSlide(0);
+  }
+
+  function start(e) {
+    e.stopPropagation();
+    started = true;
+    document.getElementById('gate').classList.add('hidden');
+    bgm.volume = 0.85;
+    bgm.play().catch(()=>{});
+    showSlide(0);
+  }
+
+  function toggleMute(e) {
+    e.stopPropagation();
+    bgm.muted = !bgm.muted;
+    document.getElementById('muteBtn').textContent = bgm.muted ? '🔇' : '🔊';
+  }
+
+  stage.addEventListener('click', (e) => {
+    if (!started) return;
+    if (e.target.closest('#controls') || e.target.closest('#replay')) return;
+    next();
+  });
+</script>
+</body>
+</html>
